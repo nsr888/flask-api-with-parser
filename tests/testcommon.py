@@ -13,8 +13,6 @@ class TestPrepairProxy(unittest.TestCase):
         args["timeout"] = 120
         args["limit"] = 5
         args["start_time"] = time.time()
-        args["login"] = "79112587299"
-        args["password"] = "19734682"
         args["proxy_str"] = get_proxy.get_free_proxy(args)
         cls.element_html = get_html.get_ok_friends_html(args).decode("utf-8")
 

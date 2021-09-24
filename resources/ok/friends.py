@@ -17,9 +17,6 @@ class OkFriends(Resource):
             abort(400)
 
         args["start_time"] = time.time()
-        args["login"] = "79112587299"
-        args["password"] = "19734682"
-
         html = get_ok_friends_html(args)
         friends_arr = parse_friends_html(html, args["limit"])
         return {"result": friends_arr}

@@ -25,15 +25,15 @@ def get_ok_session(driver, settings):
                 driver.add_cookie(cookie)
         print("Cookies loaded.")
     else:
-        print("Cookies file not found.")
+        print("Cookies file not found, will try login, please wait...")
         driver.get("https://ok.ru")
         # assert "Одноклассники" in driver.title
         elem = driver.find_element_by_name("st.email")
         elem.clear()
-        elem.send_keys(settings["login"])
+        elem.send_keys(os.environ["LOGIN"])
         elem = driver.find_element_by_name("st.password")
         elem.clear()
-        elem.send_keys(settings["password"])
+        elem.send_keys(os.environ["PASSWORD"])
         elem.send_keys(Keys.RETURN)
         with open(session_file, "wb") as file_obj:
             pickle.dump(driver.get_cookies(), file_obj)
