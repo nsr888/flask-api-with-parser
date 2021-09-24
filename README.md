@@ -1,6 +1,7 @@
-# Social network http://ok.ru profile parser
+# Python Flask-Restful API
+Python Flask-Restful endpoint to retrive information about friends for given user id
 
-## Create `.env` file
+Create `.env` file
 
 ```
 LOGIN=
@@ -21,7 +22,7 @@ Run
 make run
 ```
 
-test
+Test
 
 ```
 make testapp
