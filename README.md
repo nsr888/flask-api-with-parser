@@ -1,9 +1,11 @@
 # Python Flask-Restful API
-Python Flask-Restful endpoint to retrive information about friends for given user id.
+Python Flask-Restful endpoint to retrive list of user's friends from http://ok.ru social network.
 
 <img width="1187" alt="Снимок экрана 2021-09-25 в 01 07 29" src="https://user-images.githubusercontent.com/12528718/134744579-99b4420e-f462-4e69-abcd-eb372b810870.png">
 
-Create `.env` file
+# How to launch
+
+1) Create `.env` file (fill LOGIN, PASSWORD and PROXY fields):
 
 ```
 LOGIN=
@@ -12,21 +14,19 @@ FLASK_ENV=prod
 PROXY=
 ```
 
-Build
+2) Build:
 
 ```
 make build
 ```
 
-Run
+3) Run:
 
 ```
 make run
 ```
 
-Test
-
+3) Open in browser: 
 ```
-make testapp
-make testcommon
+http://localhost:8080/ok/friends?id=<user id>&limit=<fields limit>&timeout=<time limit>
 ```
