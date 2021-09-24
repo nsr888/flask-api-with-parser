@@ -1,27 +1,29 @@
 # Social network http://ok.ru profile parser
 
-## Create `ok.env` file
+## Create `.env` file
 
 ```
-LOGIN=""
-PASSWORD=""
+LOGIN=
+PASSWORD=
+FLASK_ENV=prod
+PROXY=
 ```
 
-## Build
+Build
 
 ```
-docker build -t python-alpine-chromedriver .
+make build
 ```
 
-## Run
+Run
 
 ```
-docker run --env-file ok.env --rm -p 8080:8080 --name ok_friends_run python-alpine-chromedriver
+make run
 ```
 
-## Tests
+test
 
 ```
-docker run --entrypoint "python" --env-file ok.env --rm -p 8080:8080 --name ok_friends_testapp python-alpine-chromedriver -m tests.testapp
-docker run --entrypoint "python" --env-file ok.env --rm -p 8080:8080 --name ok_friends_testcommon python-alpine-chromedriver -m tests.testcommon
+make testapp
+make testcommon
 ```

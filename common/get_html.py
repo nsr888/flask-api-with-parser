@@ -1,6 +1,7 @@
 import os
 import time
 import pickle
+from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
@@ -12,8 +13,10 @@ from selenium.common.exceptions import (
 from common.get_proxy import get_free_proxy, ProxyTimeout
 from common.is_timeout import is_timeout
 
+load_dotenv()  # take environment variables from .env.
 
-def get_ok_session(driver, settings):
+
+def get_ok_session(driver):
     """Read session from file or login to http://ok.ru"""
     session_file = "session.pkl"
     if os.path.exists(session_file):
@@ -27,6 +30,11 @@ def get_ok_session(driver, settings):
     else:
         print("Cookies file not found, will try login, please wait...")
         driver.get("https://ok.ru")
+
+        if os.environ["FLASK_ENV"] == "prod":
+            with open("before_login.html", "w") as file_obj:
+                file_obj.write(driver.page_source)
+
         # assert "Одноклассники" in driver.title
         elem = driver.find_element_by_name("st.email")
         elem.clear()
@@ -38,7 +46,12 @@ def get_ok_session(driver, settings):
         with open(session_file, "wb") as file_obj:
             pickle.dump(driver.get_cookies(), file_obj)
         print("Logged in, cookies saved.")
-        # time.sleep(30)
+
+        if os.environ["FLASK_ENV"] == "prod":
+            with open("after_login.html", "w") as file_obj:
+                file_obj.write(driver.page_source)
+        # if os.environ["FLASK_ENV"] == "development":
+        #     time.sleep(30)
 
 
 def get_ok_friends_html2(settings):
@@ -55,26 +68,31 @@ def get_ok_friends_html2(settings):
         "proxyType": "MANUAL",
     }
     chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--window-size=1920x1080")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-gpu")
-    path_to_driver = "/usr/bin/chromedriver"
+    if os.environ["FLASK_ENV"] == "prod":
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--window-size=1200x800")
+        path_to_driver = "/usr/bin/chromedriver"
+    else:
+        path_to_driver = os.environ["CHROMEDRIVER"]
     with webdriver.Chrome(
         executable_path=path_to_driver, options=chrome_options
     ) as driver:
         driver.set_page_load_timeout(settings["timeout"])
         try:
-            get_ok_session(driver, settings)
+            get_ok_session(driver)
         except InvalidCookieDomainException:
             print(
                 "Adding cookies from file failed, remove cookies file and try again..."
             )
-            os.remove("session.pkl")
-            get_ok_session(driver, settings)
+            os.remove("/vol-data/session.pkl")
+            get_ok_session(driver)
         time.sleep(page_open_pause_time)
+        print("Loading ok.ru friends page...")
         driver.get("https://ok.ru/profile/" + str(settings["id"]) + "/friends")
+        print("Page loaded.")
         # assert "Татьяна Недомеркова" in driver.title
         last_elem = ""
         while True:
@@ -112,15 +130,18 @@ def get_ok_friends_html(settings):
         return "Please provide login to http://ok.ru in ENV"
     while True:
         try:
-            settings["proxy_str"] = get_free_proxy(settings)
+            if "PROXY" in os.environ:
+                settings["proxy_str"] = os.environ["PROXY"]
+            else:
+                settings["proxy_str"] = get_free_proxy(settings)
             # proxy_str = "52.205.44.116:8888"
             return get_ok_friends_html2(settings)
         except WebDriverException as err:
             print("Error:", err)
         except ProxyTimeout:
-            return ""
+            return "".encode("utf-8")
         except TimeoutException:
-            return ""
+            return "".encode("utf-8")
 
 
 if __name__ == "__main__":
