@@ -13,7 +13,10 @@ def parse_friends_html(html, limit):
             img = div.find("img")
             o_class = div.find("a", class_="o")
             if o_class:
-                person_dict["id"] = o_class["href"].split("/")[-1]
+                person_dict["id"] = (
+                    o_class["hrefattrs"].split("friendId=")[-1].split("&")[0]
+                )
+                person_dict["alias"] = o_class["href"].split("/")[-1]
                 person_dict["name"] = o_class.text
             person_dict["image"] = ""
             if img:
