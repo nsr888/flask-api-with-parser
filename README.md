@@ -3,8 +3,7 @@ Python Flask-Restful endpoint to retrive list of user's friends from http://ok.r
 
 __Tech stack:__ Python Flask RESTful, Selenium, BeautifulSoup, Docker, uwsgi, nginx
 
-
-<img width="1223" alt="screenshot" src="https://user-images.githubusercontent.com/12528718/134766130-57810cb4-0bc4-4095-b8df-361183190f90.png">
+<img width="1348" alt="screenshot" src="https://user-images.githubusercontent.com/12528718/134766709-f0bff3a3-b026-4c12-b59a-a8814a7d8067.png">
 
 # How to launch
 
