@@ -18,9 +18,9 @@ def parse_friends_html(html, limit):
                 )
                 person_dict["alias"] = o_class["href"].split("/")[-1]
                 person_dict["name"] = o_class.text
-            person_dict["image"] = ""
+            person_dict["photo"] = ""
             if img:
-                person_dict["image"] = "http:" + img["src"]
+                person_dict["photo"] = "http:" + img["src"]
             data_arr.append(person_dict)
     return data_arr
 
