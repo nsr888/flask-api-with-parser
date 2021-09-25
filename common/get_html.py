@@ -18,22 +18,24 @@ load_dotenv()  # take environment variables from .env.
 
 def get_ok_session(driver):
     """Read session from file or login to http://ok.ru"""
-    session_file = "session.pkl"
+    session_file = "/tmp/session.pkl"
     if os.path.exists(session_file):
         print("Cookies file found.")
         driver.get("https://ok.ru")
         with open(session_file, "rb") as file_obj:
             cookies = pickle.load(file_obj)
             for cookie in cookies:
+                if "expiry" in cookie:
+                    del cookie["expiry"]
                 driver.add_cookie(cookie)
         print("Cookies loaded.")
     else:
         print("Cookies file not found, will try login, please wait...")
         driver.get("https://ok.ru")
 
-        if os.environ["FLASK_ENV"] == "prod":
-            with open("before_login.html", "w") as file_obj:
-                file_obj.write(driver.page_source)
+        # if os.environ["FLASK_ENV"] == "prod":
+        #     with open("before_login.html", "w") as file_obj:
+        #         file_obj.write(driver.page_source)
 
         # assert "Одноклассники" in driver.title
         elem = driver.find_element_by_name("st.email")
@@ -47,9 +49,9 @@ def get_ok_session(driver):
             pickle.dump(driver.get_cookies(), file_obj)
         print("Logged in, cookies saved.")
 
-        if os.environ["FLASK_ENV"] == "prod":
-            with open("after_login.html", "w") as file_obj:
-                file_obj.write(driver.page_source)
+        # if os.environ["FLASK_ENV"] == "prod":
+        #     with open("after_login.html", "w") as file_obj:
+        #         file_obj.write(driver.page_source)
         # if os.environ["FLASK_ENV"] == "development":
         #     time.sleep(30)
 
